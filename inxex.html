@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personalize sua proposta</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #333;
+    }
+
+    button, input[type="text"] {
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    button:hover, input[type="text"]:hover {
+      transform: scale(1.1);
+    }
+
+    #yes-btn {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    #no-btn {
+      background-color: #f44336;
+      color: white;
+      position: absolute;
+    }
+
+    #download-icon {
+      position: fixed;
+      top: 10px;
+      right: 30px;
+      font-size: 1.8rem;
+      color: #007BFF;
+      cursor: pointer;
+      z-index: 1000;
+      transition: transform 0.2s ease, color 0.2s ease;
+    }
+
+    #download-icon:hover {
+      transform: scale(1.3);
+      color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="form-container">
+    <h1>Qual a proposta irrecusável você gostaria de fazer hoje?</h1>
+    <form id="question-form">
+      <input type="text" id="user-question" placeholder="Digite sua proposta aqui..." required>
+      <button type="submit">Enviar</button>
+    </form>
+  </div>
+
+  <div class="container" id="question-container" style="display: none;">
+    <h1 id="question"></h1>
+    <button id="yes-btn">Sim</button>
+    <button id="no-btn">Não</button>
+    <div id="download-icon" title="Baixar Página">💾</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    const formContainer = document.getElementById('form-container');
+    const questionContainer = document.getElementById('question-container');
+    const questionForm = document.getElementById('question-form');
+    const userQuestionInput = document.getElementById('user-question');
+    const questionElement = document.getElementById('question');
+    const yesBtn = document.getElementById('yes-btn');
+    const noBtn = document.getElementById('no-btn');
+    const downloadIcon = document.getElementById('download-icon');
+
+    // Evento para enviar o formulário
+    questionForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const userQuestion = userQuestionInput.value;
+      questionElement.textContent = userQuestion;
+      formContainer.style.display = 'none';
+      questionContainer.style.display = 'block';
+    });
+
+    // Evento para o botão "Sim"
+    yesBtn.addEventListener('click', () => {
+      document.body.innerHTML = `
+        <div style="text-align: center; color: white; font-size: 2rem; margin-top: 20%;">
+          Proposta aceita! 🎉🎆
+        </div>
+      `;
+      document.body.style.background = 'black';
+
+      const duration = 5 * 1000;
+      const end = Date.now() + duration;
+
+      (function frame() {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 }
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 }
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      })();
+    });
+
+    // Evento para o botão "Não"
+    noBtn.addEventListener('mouseover', () => {
+      const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+      const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    });
+
+    // Evento para o ícone de download
+    downloadIcon.addEventListener('click', () => {
+      const userQuestion = questionElement.textContent;
+
+      // Criar um novo documento HTML dinamicamente
+      const doc = document.implementation.createHTMLDocument("Proposta Irrecusável");
+
+      // Adicionar o estilo
+      const style = document.createElement('style');
+      style.textContent = document.querySelector('style').textContent;
+      doc.head.appendChild(style);
+
+      // Adicionar o conteúdo
+      const container = document.createElement('div');
+      container.className = 'container';
+      container.innerHTML = `
+        <h1>${userQuestion}</h1>
+        <button id="yes-btn">Sim</button>
+        <button id="no-btn">Não</button>
+      `;
+      doc.body.appendChild(container);
+
+      // Adicionar o script
+      const script = document.createElement('script');
+      script.textContent = `
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+
+        yesBtn.addEventListener('click', () => {
+          document.body.innerHTML = '<div style="text-align: center; color: white; font-size: 2rem; margin-top: 20%;">Proposta aceita! 🎉🎆</div>';
+          document.body.style.background = 'black';
+
+          const duration = 5 * 1000;
+          const end = Date.now() + duration;
+
+          (function frame() {
+            confetti({
+              particleCount: 5,
+              angle: 60,
+              spread: 55,
+              origin: { x: 0 }
+            });
+            confetti({
+              particleCount: 5,
+              angle: 120,
+              spread: 55,
+              origin: { x: 1 }
+            });
+
+            if (Date.now() < end) {
+              requestAnimationFrame(frame);
+            }
+          })();
+        });
+
+        noBtn.addEventListener('mouseover', () => {
+          const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+          const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+          noBtn.style.left = \`\${x}px\`;
+          noBtn.style.top = \`\${y}px\`;
+        });
+      `;
+      doc.body.appendChild(script);
+
+      // Criar o arquivo para download
+      const blob = new Blob([doc.documentElement.outerHTML], { type: 'text/html' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'proposta-completa.html';
+      link.click();
+    });
+  </script>
+</body>
+</html>
